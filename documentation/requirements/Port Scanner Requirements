@@ -1,0 +1,7 @@
+                    Port Scanner Requirements Document
+Function:  To get the machine name and to scan ports selected by the user given an IP address.
+
+Interface: Command Line Interface
+
+User Selections: User can select what to scan using numbers 1-5 which corresponds to All Common Ports,
+                 Common TCP Ports, Common UDP Ports, a Full Port Scan, or a Custom Range Scan.
