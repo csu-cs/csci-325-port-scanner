@@ -11,35 +11,40 @@ public class CustomScan extends Socket {
     private int mStartPort = 0;
     private int mEndPort = 65535;
     private int mTimeout = 1000;
+    private boolean[] mPortsStatus;
 
     public CustomScan() {}
 
-    private boolean[] getOpenPorts() {
+    public boolean getOpenPorts() {
+        Socket sock;
+        InetSocketAddress isa;
+
         if(mEndPort-mStartPort < 0 ) {
-            boolean portsStatus[] = new boolean[1];
-            portsStatus[0] = false;
-            return portsStatus;
+            return false;
         }
 
-        boolean portsStatus[] = new boolean[mEndPort - mStartPort];
+        mPortsStatus = new boolean[mEndPort-mStartPort];
 
         System.out.print("\r\nScanning");
 
-        for (int i = 0; i < portsStatus.length; i++) {
+        for (int i = 0; i < mPortsStatus.length; i++) {
             if(i % 5 == 0) {
                 System.out.print(".");
             }
+
             try {
-                Socket socket = new Socket();
-                socket.connect(new InetSocketAddress(mIP,mStartPort + i), mTimeout);
-                socket.close();
-                portsStatus[i] = true;
+                isa = new InetSocketAddress(mIP,i+mStartPort);
+                sock  = new Socket();
+                sock.connect(isa, mTimeout);
+                sock.close();
+                mPortsStatus[i] = true;
+//                System.out.println(i);
             } catch (Exception ex) {
-                portsStatus[i] = false;
+                mPortsStatus[i] = false;
             }
         }
 
-        return portsStatus;
+        return true;
     }
 
     public int getTimeout () {return mTimeout;}
@@ -50,7 +55,7 @@ public class CustomScan extends Socket {
     public boolean setStartPort(int startPort) {
         if(0 <= startPort && startPort <= 65535) {
             try {
-                mTimeout = startPort;
+                mStartPort = startPort;
                 return true;
             } catch (Exception ex) {
                 return false;
@@ -62,7 +67,7 @@ public class CustomScan extends Socket {
     public boolean setEndPort(int endPort) {
         if(0 <= endPort && endPort <= 65535) {
             try {
-                mTimeout = endPort;
+                mEndPort = endPort;
                 return true;
             } catch (Exception ex) {
                 return false;
@@ -91,19 +96,20 @@ public class CustomScan extends Socket {
 
     public void printPorts()
     {
-        boolean portsStatus[] = this.getOpenPorts();
+        //boolean portsStatus[] = this.getOpenPorts();
 
         System.out.println("\r\nOpen Ports for " + mIP + ": ");
 
-        for (int i = 0; i < portsStatus.length - 1; i++) {
-            if (portsStatus[i]) {
-                System.out.print(mStartPort + i + ", ");
-            }
-
-            if (portsStatus[i]) {
-                System.out.print(mStartPort + i + ". ");
+        for (int i = mStartPort; i < mEndPort - 1; i++) {
+            if (mPortsStatus[i]) {
+                System.out.print(i + mStartPort + ", ");
             }
         }
+
+            if (mPortsStatus[mEndPort - 1]) {
+                System.out.print(mEndPort - 1 + ". ");
+            }
+
     }
 }
 
