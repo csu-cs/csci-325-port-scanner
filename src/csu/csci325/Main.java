@@ -34,17 +34,20 @@ public class Main {
 
         switch (userSelect[0]) {
             case 1:
-                //CommonScan comScan = new CommonScan(ipAddress, "both");
-                //comScan.displayResults();
+                CommonScan comScan = new CommonScan(ipAddress, "both");
+                comScan.displayResults();
                 break;
             case 2:
-                //CommonScan tcpScan = new CommonScan(ipAddress, "tcp");
+                CommonScan tcpScan = new CommonScan(ipAddress, "tcp");
+                tcpScan.displayResults();
                 break;
             case 3:
-                //CommonScan udpScan = new CommonScan(ipAddress, "udp");
+                CommonScan udpScan = new CommonScan(ipAddress, "udp");
+                udpScan.displayResults();
                 break;
             case 4:
                 //FullScan fullScan = new FullScan(ipAddress);
+                //fullScan.displayResults()
                 break;
             case 5:
                 do {
@@ -62,6 +65,7 @@ public class Main {
                                 System.out.println("Invalid port range given, please enter two different port numbers, first the lowest then the highest.");
                         } while (portStart >= portEnd);
                         //CustomScan cusRangeScan = new CustomScan(ipAddress, portStart, portEnd);
+                        //cusRangeScan.printPorts();
                     } else if (userSelect[1] == 2) {
                         do {
                             System.out.println("How many ports do you want to scan?");
@@ -75,6 +79,7 @@ public class Main {
                             ports[ind] = stdin.nextInt();
                         }
                         //CustomScan cusListScan = new CustomScan(ipAddress, ports);
+                        // cusListScan.printPorts();
                     } else {
                         System.out.println("Invalid option, please try again");
                     }
