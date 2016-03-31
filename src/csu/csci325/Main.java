@@ -105,6 +105,7 @@ public class Main {
                         System.out.println("Invalid selection, please enter a 1 or 2");
                     }
                 } while (userSelect[1] < 1 || userSelect[1] > 2);
+                break;
             case 6:
                 System.out.println("Which port would you like to scan?");
                 portStart = stdin.nextInt();
