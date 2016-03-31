@@ -2,6 +2,7 @@ package csu.csci325;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * Author: Kenneth Hunter
@@ -17,6 +18,8 @@ public class CustomScan extends Socket {
     private int mTimeout = 1000;            // Timeout in ms for individual port query. Default is 1 sec.
     private boolean[] mPortsStatus;         // Array of bools to indicate whether socket is open
                                             // (true) or closed (false).
+    private Stack<Integer> iStack = new LinkedListStack<Integer>();
+    Scanner stdIn = new Scanner(System.in);
 
     public CustomScan() {}
 
@@ -35,9 +38,12 @@ public class CustomScan extends Socket {
         if(mEndPort-mStartPort < 0 ) {
             return false;
         }
+        else if(iStack.size() == 0){
+            return false;
+        }
 
         // Declare a boolean array of size of the range of ports
-        mPortsStatus = new boolean[mEndPort-mStartPort];
+        mPortsStatus = new boolean[iStack.size()];
 
         // Print scanning a continue to print dots as long as the scanning continues
         // so the user knows the program hasn't locked.
@@ -51,7 +57,7 @@ public class CustomScan extends Socket {
             // If we can connect to the socket, it's open. Mark that element in the array as
             // true. If there's an exception, it's closed, so mark it false.
             try {
-                isa = new InetSocketAddress(mIP,i+mStartPort);
+                isa = new InetSocketAddress(mIP, iStack.pop());
                 sock  = new Socket();
                 sock.connect(isa, mTimeout);
                 sock.close();
@@ -70,6 +76,7 @@ public class CustomScan extends Socket {
     public String getIP() {return mIP;}
     public int getStartPort() {return mStartPort;}
     public int getEndPort() {return mEndPort;}
+    public void printPorts() {System.out.println(iStack.toString());}
 
     // Setters
     /*
@@ -135,15 +142,39 @@ public class CustomScan extends Socket {
     }
 
     /*
+    * Method builds the stack of ports to scan. It takes a boolean that indicates whether
+    * the stack will be built from a range (mStartPort to mEndPort) or allow the user to
+    * enter individual ports to add to the stack.
+    * Returns: boolean to indicate that the stack was successfully built.
+     */
+    private boolean buildStack(boolean isRange) {
+        if(isRange) {
+            if (mEndPort > mStartPort && mEndPort > 0) {
+                //System.out.println(iStack.peek());
+                for (int i = mStartPort; i < mEndPort; i++) {
+                    iStack.push(i);
+                }
+                return true;
+            } else return false;
+        } else {
+            System.out.println("Enter ports to scan separated by a space (1 2 3 10). 'Q' and <Enter> to finish.");
+            while(stdIn.hasNextInt()) {
+                iStack.push(stdIn.nextInt());
+            }
+            return true;
+        }
+    }
+
+    /*
     * Method prints a list of the open ports to the screen.
      */
-    public void printPorts()
+    public void printOpenPorts()
     {
         System.out.println('\n');
         System.out.println("Open Ports for " + mIP + ": ");
 
         // Cycle through array and print element number for any that are true.
-        for (int i = mStartPort; i < mEndPort; i++) {
+        for (int i = 0; i < mPortsStatus.length; i++) {
             if (mPortsStatus[i]) {
                 System.out.print(i + mStartPort + ", ");
             }
@@ -161,9 +192,13 @@ public class CustomScan extends Socket {
         CustomScan cs = new CustomScan();
         cs.setStartPort(0);
         cs.setEndPort(50);
+        cs.buildStack(true);
+        cs.buildStack(false);
+        cs.printPorts();
+        System.out.println();
         cs.setIP("127.0.0.1");
         if(cs.getOpenPorts()) {
-            cs.printPorts();
+            cs.printOpenPorts();
         }
         else System.out.println("Invalid ports");
     }
