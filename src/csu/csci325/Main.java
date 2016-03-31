@@ -73,8 +73,12 @@ public class Main {
                             if (portStart >= portEnd || portStart < 0 || portEnd > 65535)
                                 System.out.println("Invalid port range given, please enter two different port numbers, first the lowest then the highest and between 0 and 65535.");
                         } while (portStart >= portEnd || portStart < 0 || portEnd > 65535);
-                        //CustomScan cusRangeScan = new CustomScan(ipAddress, portStart, portEnd);
-                        //cusRangeScan.printPorts();
+                        CustomScan cusRangeScan = new CustomScan();
+                        cusRangeScan.setIP(ipAddress);
+                        cusRangeScan.setStartPort(portStart);
+                        cusRangeScan.setEndPort(portEnd);
+                        if (cusRangeScan.getOpenPorts())
+                            cusRangeScan.printPorts();
                     } else if (userSelect[1] == 2) {
                         do {
                             System.out.println("How many ports do you want to scan?");
@@ -92,8 +96,11 @@ public class Main {
                                 ports[ind] = stdin.nextInt();
                             }
                         }
-                        //CustomScan cusListScan = new CustomScan(ipAddress, ports);
-                        // cusListScan.printPorts();
+                        CustomScan cusListScan = new CustomScan();
+                        cusListScan.setIP(ipAddress);
+                        //cusListScan.setPorts(ports); //This function needs to be implemented
+                        if (cusListScan.getOpenPorts())
+                            cusListScan.printPorts();
                     } else {
                         System.out.println("Invalid selection, please enter a 1 or 2");
                     }
