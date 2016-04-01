@@ -79,52 +79,61 @@ public class Main {
                 } while (userSelect[2] >= 1 && userSelect[2] <= 3);
                 break;
             case 5:
-                System.out.println("Select option:");
-                System.out.println(" 1 - Scan a range of ports (i.e. 23-35)");
-                System.out.println(" 2 - Scan a list of ports (i.e. 22, 23, 34, 16)");
-                do {
+                CustomScan cs = new CustomScan();
+                boolean validChoice = false;
+                char choice;
+
+                while (!validChoice) {
+                    System.out.println("Select option:");
+                    System.out.println(" 1 - Enter a range of ports to scan (i.e. 23-35)");
+                    System.out.println(" 2 - Enter a list of ports to scan (i.e. 22, 23, 34, 16)");
                     userSelect[1] = stdin.nextInt();
+
                     if (userSelect[1] == 1) {
                         do {
                             System.out.println("Enter lowest port value: ");
                             portStart = stdin.nextInt();
                             System.out.println("Enter highest port value: ");
                             portEnd = stdin.nextInt();
-                            if (portStart >= portEnd || portStart < 0 || portEnd > 65535)
-                                System.out.println("Invalid port range given, please enter two different port numbers, first the lowest then the highest and between 0 and 65535.");
-                        } while (portStart >= portEnd || portStart < 0 || portEnd > 65535);
-                        CustomScan cusRangeScan = new CustomScan();
-                        cusRangeScan.setIP(ipAddress);
-                        cusRangeScan.setStartPort(portStart);
-                        cusRangeScan.setEndPort(portEnd);
-                        if (cusRangeScan.getOpenPorts())
-                            cusRangeScan.printPorts();
-                    } else if (userSelect[1] == 2) {
-                        do {
-                            System.out.println("How many ports do you want to scan?");
-                            userSelect[2] = stdin.nextInt();
-                            if (userSelect[2] < 3)
-                                System.out.println("This scan is expecting three or more ports, please enter a value higher than 2.");
-                        } while (userSelect[2] < 3);
 
-                        ports = new int[userSelect[2]];
-                        for (int ind = 0; ind < userSelect[2]; ind++) {
-                            System.out.println("Enter port number for scan " + ind + ": ");
-                            ports[ind] = stdin.nextInt();
-                            while (!validPort(ports[ind])) {
-                                System.out.println("Invalid port of: " + ports[ind] + "please enter a number between 0 and 65535:");
-                                ports[ind] = stdin.nextInt();
+                            if (portStart >= portEnd) {
+                                System.out.println("Invalid port range given.");
+                                System.out.println("Please enter lowest port first.");
                             }
-                        }
-                        CustomScan cusListScan = new CustomScan();
-                        cusListScan.setIP(ipAddress);
-                        //cusListScan.setPorts(ports); //This function needs to be implemented
-                        if (cusListScan.getOpenPorts())
-                            cusListScan.printPorts();
+                            else if (portStart < 0 || portEnd > 65535) {
+                                System.out.println("Invalid port range given.");
+                                System.out.println("Valid ports are 0 to 65535.");
+                            }
+                        } while (!cs.setStartPort(portStart) || !cs.setEndPort(portEnd));
+
+                        System.out.println("Start Port: " + cs.getStartPort());
+                        System.out.println("End Port: " + cs.getEndPort());
+                        cs.buildStack(true);
+
+                    } else if (userSelect[1] == 2) {
+                        cs.buildStack(false);
+
                     } else {
-                        System.out.println("Invalid selection, please enter a 1 or 2");
+                        System.out.println("Invalid option, please try again");
+                        validChoice = false;
                     }
-                } while (userSelect[1] < 1 || userSelect[1] > 2);
+                    System.out.println(" Done entering ports? (Y/N)");
+                    try {
+                        choice = stdin.next().charAt(0);
+                        if (choice == 'y' || choice == 'Y') {
+                            validChoice = true;
+                        }
+                        else if (choice == 'n' || choice == 'N') {
+                            validChoice = false;
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("Invalid choice");
+                        validChoice = false;
+                    }
+                }
+                //cs.printPorts();
+                cs.getOpenPorts();
+                cs.printOpenPorts();
                 break;
             case 6:
                 System.out.println("Which port would you like to scan?");
