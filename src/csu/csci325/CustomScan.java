@@ -17,7 +17,7 @@ public class CustomScan extends Socket {
     private int mEndPort = 65535;           // Ending port of the range to scan. Default is 65535.
     private int mTimeout = 1000;            // Timeout in ms for individual port query. Default is 1 sec.
     private int[][] mPortsStatus;           // 2D Array of ints to indicate whether socket is open
-                                            // (1) or closed (0).
+                                            // (1) or closed (0). Column 1 holds port. Column 2 holds status.
     private Stack<Integer> iStack = new LinkedListStack<Integer>();
     Scanner stdIn = new Scanner(System.in);
 
@@ -26,7 +26,7 @@ public class CustomScan extends Socket {
     /*
     * Method scans for open ports in the range from mStartPort to mEndPort and stores the results
     * in mPortsStatus.
-     * Returns: boolean to indicate whether port range is valid. True = valid range.
+    * Returns: boolean to indicate whether port range is valid. True = valid range.
     */
 
     public boolean getOpenPorts() {
@@ -42,7 +42,7 @@ public class CustomScan extends Socket {
             return false;
         }
 
-        // Declare a boolean array of size of the range of ports
+        // Declare a 2D int array of size of the range of ports
         mPortsStatus = new int[iStack.size()][2];
 
         // Print scanning a continue to print dots as long as the scanning continues
@@ -169,6 +169,10 @@ public class CustomScan extends Socket {
         }
     }
 
+    /*
+    * Method checks to see if the port is valid.
+    * Returns: true for valid and false for invalid.
+     */
     public boolean validPort(int port) {
         if (port >= 0 && port <= 65535) {
             return true;
@@ -183,7 +187,7 @@ public class CustomScan extends Socket {
         System.out.println('\n');
         System.out.println("Open Ports for " + mIP + ": ");
 
-        // Cycle through array and print element number for any that are true.
+        // Cycle through array and print port number for any that are true.
         for (int i = 0; i < mPortsStatus.length; i++) {
             if (mPortsStatus[i][1] == 1) {
                 System.out.print(" " + mPortsStatus[i][0] + " ");
