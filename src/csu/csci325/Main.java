@@ -29,7 +29,7 @@ public class Main {
         System.out.println("Select port scan technique:");
         System.out.println(" 1 - All Common Ports");
         System.out.println(" 2 - Common TCP Ports");
-        System.out.println(" 3 - Common UDP Ports");
+        System.out.println(" 3 - Common UDP Ports ((will only find ports that are responding))");
         System.out.println(" 4 - Full Port Scan (This may take several minutes)");
         System.out.println(" 5 - Custom Port Scan");
         System.out.println(" 6 - Single Port Scan");
@@ -55,8 +55,32 @@ public class Main {
                 udpScan.displayResults();
                 break;
             case 4:
-                //FullScan fullScan = new FullScan(ipAddress);
-                //fullScan.displayResults()
+                FullScan fullScan = new FullScan(ipAddress);
+                System.out.println("Select option: ");
+                System.out.println("1 - List all open ports");
+                System.out.println("2 - List all closed ports");
+                System.out.println("3 - List all ports");
+                userSelect[2] = stdin.nextInt();
+                while (userSelect[2] < 1 || userSelect[2] > 3){
+                    System.out.println("Invalid option, please enter 1, 2, or 3");
+                    userSelect[2] = stdin.nextInt();
+                }
+                do {
+                    System.out.println("Scanning . . .");
+                    fullScan.fullScan();
+                    if(userSelect[2] == 1) {
+                        fullScan.displayOpen();
+                        break;
+                    }
+                    else if(userSelect[2] == 2) {
+                        fullScan.displayClose();
+                        break;
+                    }
+                    else if(userSelect[2] == 3) {
+                        fullScan.displayResults();
+                        break;
+                    }
+                } while (userSelect[2] >= 1 && userSelect[2] <= 3);
                 break;
             case 5:
                 CustomScan cs = new CustomScan();
@@ -114,7 +138,7 @@ public class Main {
                         }
                     }
                 }
-                //cs.printPorts();
+                cs.printPorts();
                 cs.getOpenPorts();
                 cs.printOpenPorts();
                 break;

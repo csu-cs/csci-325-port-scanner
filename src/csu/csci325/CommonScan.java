@@ -87,7 +87,7 @@ public class CommonScan {
         }
         if (portScansUDP[0] != null){
             for (int i = 0; i < portScansUDP.length; i++){
-                System.out.println("UDP Port: " + portScansUDP[i].getPort() + portScansUDP[i].getPortStatus());
+                System.out.println("UDP Port: " + portScansUDP[i].getPort() + " is " + portScansUDP[i].getPortStatus());
             }
         }
     }
