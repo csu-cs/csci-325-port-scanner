@@ -70,6 +70,7 @@ public class Main {
                     userSelect[1] = stdin.nextInt();
 
                     if (userSelect[1] == 1) {
+                        validChoice = true;
                         do {
                             System.out.println("Enter lowest port value: ");
                             portStart = stdin.nextInt();
@@ -91,6 +92,7 @@ public class Main {
                         cs.buildStack(true);
 
                     } else if (userSelect[1] == 2) {
+                        validChoice = true;
                         cs.buildStack(false);
 
                     } else {
@@ -98,17 +100,18 @@ public class Main {
                         validChoice = false;
                     }
                     System.out.println(" Done entering ports? (Y/N)");
-                    try {
-                        choice = stdin.next().charAt(0);
-                        if (choice == 'y' || choice == 'Y') {
-                            validChoice = true;
-                        }
-                        else if (choice == 'n' || choice == 'N') {
+                    if(validChoice) {
+                        try {
+                            choice = stdin.next().charAt(0);
+                            if (choice == 'y' || choice == 'Y') {
+                                validChoice = true;
+                            } else if (choice == 'n' || choice == 'N') {
+                                validChoice = false;
+                            }
+                        } catch (Exception ex) {
+                            System.out.println("Invalid choice");
                             validChoice = false;
                         }
-                    } catch (Exception ex) {
-                        System.out.println("Invalid choice");
-                        validChoice = false;
                     }
                 }
                 //cs.printPorts();
