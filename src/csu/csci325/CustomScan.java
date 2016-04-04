@@ -149,7 +149,7 @@ public class CustomScan extends Socket {
      */
     public boolean buildStack(boolean isRange) {
         if(isRange) {
-            if (mEndPort > mStartPort && validPort(mEndPort) && validPort(mStartPort)) {
+            if (mEndPort >= mStartPort && validPort(mEndPort) && validPort(mStartPort)) {
                 for (int i = mStartPort; i <= mEndPort; i++) {
                     iStack.push(i);
                 }
@@ -228,19 +228,23 @@ public class CustomScan extends Socket {
                     System.out.println("Enter highest port value: ");
                     portEnd = stdin.nextInt();
 
-                    if (portStart >= portEnd) {
+                    if (portStart > portEnd) {
                         System.out.println("Invalid port range given.");
                         System.out.println("Please enter lowest port first.");
+                        validChoice = false;
                     }
                     else if (portStart < 0 || portEnd > 65535) {
                         System.out.println("Invalid port range given.");
                         System.out.println("Valid ports are 0 to 65535.");
+                        validChoice = false;
                     }
                 } while (!cs.setStartPort(portStart) || !cs.setEndPort(portEnd));
 
-                System.out.println("Start Port: " + cs.getStartPort());
-                System.out.println("End Port: " + cs.getEndPort());
-                cs.buildStack(true);
+//                System.out.println("Start Port: " + cs.getStartPort());
+//                System.out.println("End Port: " + cs.getEndPort());
+                if(validChoice) {
+                    cs.buildStack(true);
+                }
 
             } else if (userSelect[1] == 2) {
                 validChoice = true;
@@ -250,9 +254,10 @@ public class CustomScan extends Socket {
                 System.out.println("Invalid option, please try again");
                 validChoice = false;
             }
-            System.out.println(" Done entering ports? (Y/N)");
+
             if(validChoice) {
                 try {
+                    System.out.println(" Done entering ports? (Y/N)");
                     choice = stdin.next().charAt(0);
                     if (choice == 'y' || choice == 'Y') {
                         validChoice = true;
