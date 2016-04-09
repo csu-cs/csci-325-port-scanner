@@ -29,7 +29,7 @@ public class Main {
         System.out.println("Select port scan technique:");
         System.out.println(" 1 - All Common Ports");
         System.out.println(" 2 - Common TCP Ports");
-        System.out.println(" 3 - Common UDP Ports");
+        System.out.println(" 3 - Common UDP Ports ((will only find ports that are responding))");
         System.out.println(" 4 - Full Port Scan (This may take several minutes)");
         System.out.println(" 5 - Custom Port Scan");
         System.out.println(" 6 - Single Port Scan");
@@ -58,10 +58,14 @@ public class Main {
                 FullScan fullScan = new FullScan(ipAddress);
                 System.out.println("Select option: ");
                 System.out.println("1 - List all open ports");
-                System.out.println("2 - List all close ports");
+                System.out.println("2 - List all closed ports");
                 System.out.println("3 - List all ports");
-                do {
+                userSelect[2] = stdin.nextInt();
+                while (userSelect[2] < 1 || userSelect[2] > 3){
+                    System.out.println("Invalid option, please enter 1, 2, or 3");
                     userSelect[2] = stdin.nextInt();
+                }
+                do {
                     System.out.println("Scanning . . .");
                     fullScan.fullScan();
                     if(userSelect[2] == 1) {
@@ -90,45 +94,53 @@ public class Main {
                     userSelect[1] = stdin.nextInt();
 
                     if (userSelect[1] == 1) {
+                        validChoice = true;
                         do {
                             System.out.println("Enter lowest port value: ");
                             portStart = stdin.nextInt();
                             System.out.println("Enter highest port value: ");
                             portEnd = stdin.nextInt();
 
-                            if (portStart >= portEnd) {
+                            if (portStart > portEnd) {
                                 System.out.println("Invalid port range given.");
                                 System.out.println("Please enter lowest port first.");
+                                validChoice = false;
                             }
                             else if (portStart < 0 || portEnd > 65535) {
                                 System.out.println("Invalid port range given.");
                                 System.out.println("Valid ports are 0 to 65535.");
+                                validChoice = false;
                             }
                         } while (!cs.setStartPort(portStart) || !cs.setEndPort(portEnd));
 
-                        System.out.println("Start Port: " + cs.getStartPort());
-                        System.out.println("End Port: " + cs.getEndPort());
-                        cs.buildStack(true);
+//                System.out.println("Start Port: " + cs.getStartPort());
+//                System.out.println("End Port: " + cs.getEndPort());
+                        if(validChoice) {
+                            cs.buildStack(true);
+                        }
 
                     } else if (userSelect[1] == 2) {
+                        validChoice = true;
                         cs.buildStack(false);
 
                     } else {
                         System.out.println("Invalid option, please try again");
                         validChoice = false;
                     }
-                    System.out.println(" Done entering ports? (Y/N)");
-                    try {
-                        choice = stdin.next().charAt(0);
-                        if (choice == 'y' || choice == 'Y') {
-                            validChoice = true;
-                        }
-                        else if (choice == 'n' || choice == 'N') {
+
+                    if(validChoice) {
+                        try {
+                            System.out.println(" Done entering ports? (Y/N)");
+                            choice = stdin.next().charAt(0);
+                            if (choice == 'y' || choice == 'Y') {
+                                validChoice = true;
+                            } else if (choice == 'n' || choice == 'N') {
+                                validChoice = false;
+                            }
+                        } catch (Exception ex) {
+                            System.out.println("Invalid choice");
                             validChoice = false;
                         }
-                    } catch (Exception ex) {
-                        System.out.println("Invalid choice");
-                        validChoice = false;
                     }
                 }
                 //cs.printPorts();

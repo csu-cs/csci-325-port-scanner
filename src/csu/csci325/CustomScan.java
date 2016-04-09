@@ -149,7 +149,7 @@ public class CustomScan extends Socket {
      */
     public boolean buildStack(boolean isRange) {
         if(isRange) {
-            if (mEndPort > mStartPort && validPort(mEndPort) && validPort(mStartPort)) {
+            if (mEndPort >= mStartPort && validPort(mEndPort) && validPort(mStartPort)) {
                 for (int i = mStartPort; i <= mEndPort; i++) {
                     iStack.push(i);
                 }
@@ -202,18 +202,78 @@ public class CustomScan extends Socket {
     */
     public static void main (String[] args){
 
+        Scanner stdin = new Scanner(System.in);
+        int[] userSelect = new int[3];
+        int portStart, portEnd;
+        boolean validChoice = false;
+        char choice;
         CustomScan cs = new CustomScan();
-        cs.setStartPort(0);
-        cs.setEndPort(50);
-        cs.buildStack(true);
-        cs.buildStack(false);
-        cs.printPorts();
-        System.out.println();
-        cs.setIP("127.0.0.1");
-        if(cs.getOpenPorts()) {
-            cs.printOpenPorts();
+
+        do {
+            System.out.println("Enter the IP address you would like to scan: ");
+        } while (!cs.setIP(stdin.nextLine()));
+
+
+        while (!validChoice) {
+            System.out.println("Select option:");
+            System.out.println(" 1 - Enter a range of ports to scan (i.e. 23-35)");
+            System.out.println(" 2 - Enter a list of ports to scan (i.e. 22, 23, 34, 16)");
+            userSelect[1] = stdin.nextInt();
+
+            if (userSelect[1] == 1) {
+                validChoice = true;
+                do {
+                    System.out.println("Enter lowest port value: ");
+                    portStart = stdin.nextInt();
+                    System.out.println("Enter highest port value: ");
+                    portEnd = stdin.nextInt();
+
+                    if (portStart > portEnd) {
+                        System.out.println("Invalid port range given.");
+                        System.out.println("Please enter lowest port first.");
+                        validChoice = false;
+                    }
+                    else if (portStart < 0 || portEnd > 65535) {
+                        System.out.println("Invalid port range given.");
+                        System.out.println("Valid ports are 0 to 65535.");
+                        validChoice = false;
+                    }
+                } while (!cs.setStartPort(portStart) || !cs.setEndPort(portEnd));
+
+//                System.out.println("Start Port: " + cs.getStartPort());
+//                System.out.println("End Port: " + cs.getEndPort());
+                if(validChoice) {
+                    cs.buildStack(true);
+                }
+
+            } else if (userSelect[1] == 2) {
+                validChoice = true;
+                cs.buildStack(false);
+
+            } else {
+                System.out.println("Invalid option, please try again");
+                validChoice = false;
+            }
+
+            if(validChoice) {
+                try {
+                    System.out.println(" Done entering ports? (Y/N)");
+                    choice = stdin.next().charAt(0);
+                    if (choice == 'y' || choice == 'Y') {
+                        validChoice = true;
+                    } else if (choice == 'n' || choice == 'N') {
+                        validChoice = false;
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Invalid choice");
+                    validChoice = false;
+                }
+            }
         }
-        else System.out.println("Invalid ports");
+        //cs.printPorts();
+        cs.getOpenPorts();
+        cs.printOpenPorts();
+
     }
 }
 
