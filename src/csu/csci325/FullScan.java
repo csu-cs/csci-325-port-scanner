@@ -1,6 +1,7 @@
 package csu.csci325;
 
 import java.net.*;
+import java.util.Scanner;
 
 /**
  * Created by Mark on 3/23/2016.
@@ -9,6 +10,8 @@ public class FullScan {
     private int mTimeout = 200;
     boolean portStatus[] = new boolean[65535];
     String IP;
+    String c;
+    Scanner sc = new Scanner(System.in);
 
     public FullScan (String ip) {
         IP = ip;
@@ -77,31 +80,51 @@ public class FullScan {
 
     public void displayOpen() {
         int check = 0;
+        int check2 = 0;
         System.out.println("Ports: ");
         for(int index = 0; index < 65535; index++) {
             if (portStatus[index]) {
                 System.out.print(index + ", ");
             }
-            if(check == 30) {
+            if(check == 25) {
                 System.out.println();
                 check = 0;
             }
+            if(check2 == 100) {
+                System.out.println("\n" + "Enter a key to show next 100 or enter q to quit");
+                c = sc.next();
+                if(c.equals("q")) {
+                    return;
+                }
+                check2 = 0;
+            }
             check++;
+            check2++;
         }
         System.out.println("are open.");
     }
     public void displayClose() {
         int check = 0;
+        int check2 = 0;
         System.out.println("Ports: ");
         for(int index = 0; index < 65535; index++) {
             if (!portStatus[index]) {
                 System.out.print(index + ", ");
             }
-            if(check == 30) {
+            if(check == 25) {
                 System.out.println();
                 check = 0;
             }
+            if(check2 == 100) {
+                System.out.println("\n" + "Enter a key to show next 100 or enter q to quit");
+                c = sc.next();
+                if(c.equals("q")) {
+                    return;
+                }
+                check2 = 0;
+            }
             check++;
+            check2++;
         }
         System.out.println("are not open.");
     }
@@ -114,3 +137,4 @@ public class FullScan {
     }
 
 }
+
