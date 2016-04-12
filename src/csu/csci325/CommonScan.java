@@ -1,9 +1,12 @@
 package csu.csci325;
 
+import java.util.Scanner;
+
 /**
  * Created by caumen163119 on 3/22/2016.
  */
 public class CommonScan {
+    Scanner stdin = new Scanner(System.in);
     private int[] tcp = new int[]
             {
                     1, 2, 7, 9, 13, 21, 22, 23, 25, 26, 37, 53, 79, 80, 81, 88, 106, 110, 111,
@@ -45,13 +48,12 @@ public class CommonScan {
 
     private void tcpScan(){
         System.out.println("Commencing tcp scans.");
-        for (int i = 0; i < 4; i++){
-            for (int j = 0; j < 25; j++){
-                portScans[(i * 25) + j] = new PortScan(mIPAddress, tcp[(i * 25) + j]);
-                portScans[(i * 25) + j].run();
-            }
-            for (int j = 0; j < 25; j++){
-                while (portScans[(i*25) + j].isAlive()){}
+        for (int i = 0; i < portScans.length; i++){
+                portScans[i] = new PortScan(mIPAddress, tcp[i]);
+                portScans[i].run();
+        }
+        for (int j = 0; j < 100; j++) {
+            while (portScans[j].isAlive()) {
             }
         }
         System.out.println("All tcp scans completed.");
@@ -59,14 +61,12 @@ public class CommonScan {
 
     private void udpScan(){
         System.out.println("Commencing udp scans.");
-        for (int i = 0; i < 4; i++){
-            for (int j = 0; j < 25; j++){
-                portScansUDP[(i * 25) + j] = new PortScanUDP(mIPAddress, udp[(i * 25) + j]);
-                portScansUDP[(i * 25) + j].run();
-            }
-            for (int j = 0; j < 25; j++){
-                while (portScansUDP[(i*25) + j].isAlive()){}
-            }
+        for (int i = 0; i < 100; i++){
+            portScansUDP[i] = new PortScanUDP(mIPAddress, udp[i]);
+            portScansUDP[i].run();
+        }
+        for (int j = 0; j < 100; j++){
+            while (portScansUDP[j].isAlive()){}
         }
         System.out.println("All udp scans completed.");
     }
@@ -80,15 +80,52 @@ public class CommonScan {
     }
 
     public void displayResults(){
+        String input;
+        int remaining, multiple;
+
         if (portScans[0] != null){
-            for (int i = 0; i < portScans.length; i++){
-                System.out.println("TCP Port: " + portScans[i].getPort() + " is " + portScans[i].getPortStatus());
+            remaining = portScans.length;
+            multiple = 0;
+
+            while (remaining > 10){
+                for (int i = 0; i < 10; i++, remaining--){
+                    System.out.println("TCP Port: " + portScans[i + (10*multiple)].getPort() + " is " + portScans[i + (10*multiple)].getPortStatus());
+                }
+                multiple++;
+                System.out.println("Press enter to continue.");
+                input = stdin.nextLine();
+            }
+            if (remaining > 0){
+                for (int i = 0; i < remaining; i++){
+                    System.out.println("TCP Port: " + portScans[i + (10*multiple)].getPort() + " is " + portScans[i + (10*multiple)].getPortStatus());
+                }
+                System.out.println("Press enter to continue.");
+                input = stdin.nextLine();
             }
         }
+
         if (portScansUDP[0] != null){
-            for (int i = 0; i < portScansUDP.length; i++){
-                System.out.println("UDP Port: " + portScansUDP[i].getPort() + " is " + portScansUDP[i].getPortStatus());
+            remaining = portScans.length;
+            multiple = 0;
+
+            while (remaining > 10){
+                for (int i = 0; i < 10; i++, remaining--){
+                    System.out.println("UDP Port: " + portScansUDP[i + (10*multiple)].getPort() + " is " + portScansUDP[i + (10*multiple)].getPortStatus());
+                }
+                multiple++;
+                System.out.println("Press enter to continue.");
+                input = stdin.nextLine();
+            }
+            if (remaining > 0){
+                for (int i = 0; i < remaining; i++){
+                    System.out.println("UDP Port: " + portScansUDP[i + (10*multiple)].getPort() + " is " + portScansUDP[i + (10*multiple)].getPortStatus());
+                }
+                System.out.println("Press enter to continue.");
+                input = stdin.nextLine();
             }
         }
+    }
+
+    public static void main (String[] args){
     }
 }
