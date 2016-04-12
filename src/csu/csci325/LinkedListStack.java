@@ -23,6 +23,88 @@ public class LinkedListStack<T> implements csu.csci325.Stack<T> {
     }
 
     @Override
+    public int contains(T element) {
+        int idx = 0;
+        for (Node rover = mHead; rover != null; rover = rover.mNext, idx++) {
+            if (rover.mData.equals(element)) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void addFront(T element) {
+        push(element);
+    }
+
+    @Override
+    public void addLast(T element) {
+        Node newNode = new Node(element, null);
+        Node rover;
+
+        if(mHead == null) {
+            mHead = newNode;
+        } else {
+
+            for (rover = mHead; rover.mNext != null; rover = rover.mNext) {
+            }
+
+            rover.mNext = newNode;
+        }
+    }
+
+    @Override
+    public boolean add(int idx, T element) {
+        Node rover = mHead;
+        if (idx == 0) {
+            addFront(element);
+            return true;
+        }
+        for (int i = 0; i < idx-1 && rover != null; i++) {
+            rover = rover.mNext;
+        }
+        if (rover != null) {
+            if (rover.mNext == null) {
+                addLast(element);
+            } else {
+                Node newNode = new Node(element, rover.mNext);
+                rover.mNext = newNode;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void remove(int idx) {
+        remove(get(idx));
+    }
+
+    @Override
+    public void remove(T element) {
+        Node rover = mHead;
+        if (mHead == null) {
+            return;
+        }
+        if (mHead.mData.equals(element)) {
+            mHead = null;
+            return;
+        }
+        while (rover != null && rover.mNext != null) {
+            if (rover.mNext.mData.equals(element)) {
+//                if (rover.mNext == null) {
+//                    mTail = rover;
+//                }
+                rover.mNext = rover.mNext.mNext;
+                return;
+            }
+            rover = rover.mNext;
+        }
+    }
+
+    @Override
     public T pop() {
         if (mHead == null) {
             return null;
@@ -32,6 +114,18 @@ public class LinkedListStack<T> implements csu.csci325.Stack<T> {
         return ret.mData;
     }
 
+    @Override
+    public T get(int idx) {
+        int i = 0;
+        Node rover;
+        for (rover = mHead; rover != null && i < idx; rover = rover.mNext, i++) {
+        }
+
+        if (rover != null) {
+            return rover.mData;
+        }
+        return null;
+    }
     @Override
     public T peek() {
         if (mHead == null) {
