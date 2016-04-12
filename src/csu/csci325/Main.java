@@ -143,9 +143,10 @@ public class Main {
                         }
                     }
                 }
-                //cs.printPorts();
+                
                 cs.getOpenPorts();
-                cs.printOpenPorts();
+                // True to print all open chosen ports or false to print the status of all chosen ports.
+                cs.printOpenPorts(true);
                 break;
             case 6:
                 System.out.println("Which port would you like to scan?");
