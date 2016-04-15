@@ -148,25 +148,31 @@ public class CustomScan extends Socket {
     * Returns: boolean to indicate that the stack was successfully built with valid ports.
      */
     public boolean buildStack(boolean isRange) {
+        int x = 0;
         if(isRange) {
             if (mEndPort >= mStartPort && validPort(mEndPort) && validPort(mStartPort)) {
                 for (int i = mStartPort; i <= mEndPort; i++) {
-                    iStack.push(i);
+                    if(iStack.contains(i) == -1) {
+                        iStack.push(i);
+                    }
                 }
                 return true;
             } else return false;
         } else {
-            System.out.println("Enter ports to scan separated by a space (1 2 3 10). 'Q' and <Enter> to finish.");
-            while(stdIn.hasNextInt()) {
-                if(validPort(iStack.peek())) {
-                    iStack.push(stdIn.nextInt());
-                } else {
-                    System.out.println("Invalid port.");
-                    return false;
+            System.out.println("Enter ports to scan separated by a space (1 2 3 10). '-1' and <Enter> to finish.");
+            while(x >= 0) {
+                x = stdIn.nextInt();
+
+                if(validPort(x)) {
+                    if(iStack.contains(x) == -1) {
+                        iStack.push(x);
+                    }
                 }
             }
-            return true;
         }
+
+        return true;
+
     }
 
     /*
@@ -181,20 +187,39 @@ public class CustomScan extends Socket {
 
     /*
     * Method prints a list of the open ports to the screen.
+    * @param PrintOnlyOpen a boolean that indicates only open ports will be printed if true and if false
+    * indicates that all ports and their status will be printed.
      */
-    public void printOpenPorts()
+    public void printOpenPorts(boolean PrintOnlyOpen)
     {
+
         System.out.println('\n');
-        System.out.println("Open Ports for " + mIP + ": ");
 
-        // Cycle through array and print port number for any that are true.
-        for (int i = 0; i < mPortsStatus.length; i++) {
-            if (mPortsStatus[i][1] == 1) {
-                System.out.print(" " + mPortsStatus[i][0] + " ");
+        if(mPortsStatus.length > 0) {
+            if (PrintOnlyOpen) {
+                System.out.println("Open Ports for " + mIP + ": ");
+                // Cycle through array and print port number for any that are open.
+                for (int i = 0; i < mPortsStatus.length; i++) {
+                    if (mPortsStatus[i][1] == 1) {
+                        System.out.format("%6d%2s%-6s", mPortsStatus[i][0], ": ", "Open");
+                    }
+                }
+            } else {
+                // Cycle through array and print port number and status.
+                System.out.println("Port status for " + mIP + ": ");
+                for (int i = 0; i < mPortsStatus.length; i++) {
+                    if (i % 10 == 0) {
+                        System.out.println();
+                    }
+                    if (mPortsStatus[i][1] == 1) {
+                        System.out.format("%6d%2s%-8s", mPortsStatus[i][0], ": ", "Open");
+                    } else {
+                        System.out.format("%6d%2s%-8s", mPortsStatus[i][0], ": ", "Closed");
+                    }
+                }
             }
+            System.out.println();
         }
-
-       System.out.println();
     }
 
     /*
@@ -270,9 +295,9 @@ public class CustomScan extends Socket {
                 }
             }
         }
-        //cs.printPorts();
+        cs.printPorts();
         cs.getOpenPorts();
-        cs.printOpenPorts();
+        cs.printOpenPorts(false);
 
     }
 }
