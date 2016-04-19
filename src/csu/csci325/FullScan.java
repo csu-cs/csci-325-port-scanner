@@ -17,6 +17,7 @@ public class FullScan {
         IP = ip;
     }
 
+    //will scan every port for the given IP address
     public boolean fullScan () {
         try {
             threads(IP);
@@ -25,6 +26,7 @@ public class FullScan {
         }
         return true;
     }
+    //creates 62 threads each scanning 1057 ports
     public void threads (String IP) throws InterruptedException{
         int threads = 62;
         int count = 62;
@@ -38,6 +40,7 @@ public class FullScan {
         }
     }
 
+    //the run class for the threads
     public class Runner implements Runnable {
         final int startPort = 0;
 
@@ -68,6 +71,7 @@ public class FullScan {
     }
 
 
+    //display all open ports 500 at a time.
     public void displayOpen() {
         int check = 0;
         int check2 = 0;
@@ -94,6 +98,7 @@ public class FullScan {
         }
 
     }
+    //display all close ports 500 at a time.
     public void displayClose() {
         int check = 0;
         int check2 = 0;
@@ -121,13 +126,5 @@ public class FullScan {
         }
 
     }
-    public static void main(String[] args) {
-        FullScan FS = new FullScan("192.168.56.1");
-
-        FS.fullScan();
-        FS.displayClose();
-
-    }
-
 }
 
