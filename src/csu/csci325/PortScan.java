@@ -26,6 +26,7 @@ public class PortScan extends Thread {
 
     public void run() {
         try{
+            //System.out.println("Starting scan on port " + portNumber);
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(ipAddress, portNumber), mTimeout);
             socket.close();
@@ -33,6 +34,7 @@ public class PortScan extends Thread {
         } catch (Exception ex) {
             isOpen = false;
         }
+        //System.out.println("Finished scan on port " + portNumber);
     }
 
     public String getPortStatus() {

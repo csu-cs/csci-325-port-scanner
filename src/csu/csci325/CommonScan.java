@@ -3,10 +3,12 @@ package csu.csci325;
 import java.util.Scanner;
 
 /**
- * Created by caumen163119 on 3/22/2016.
+ * Scans the 100 most commonly used ports based on inputs.
  */
 public class CommonScan {
     Scanner stdin = new Scanner(System.in);
+    private java.util.List<PortScan> portScans= new java.util.ArrayList<>();
+    private java.util.List<PortScanUDP> portScansUDP= new java.util.ArrayList<>();
     private int[] tcp = new int[]
             {
                     1, 2, 7, 9, 13, 21, 22, 23, 25, 26, 37, 53, 79, 80, 81, 88, 106, 110, 111,
@@ -30,99 +32,103 @@ public class CommonScan {
                     49191, 49192, 49193, 49194, 49200, 49201
             };
     private String mIPAddress;
-    private PortScan[] portScans = new PortScan[tcp.length];
-    private PortScanUDP[] portScansUDP = new PortScanUDP[udp.length];
 
+    /**
+     * Sets up the port scanner to scan a particular ip and protocol with the predefined timeout of 250ms
+     * @param ip = valid ip address (i.e. "192.168.1.1")
+     * @param scope if = "tcp" then sets up scanning tcp ports only, if = "udp" then sets up scanning udp ports only, otherwise scans both.
+     */
     public CommonScan(String ip, String scope) {
         mIPAddress = ip;
 
         if (scope.equals("tcp")){
+            for (int i = 0; i < tcp.length; i++){
+                portScans.add(new PortScan(mIPAddress, tcp[i]));
+            }
             tcpScan();
         } else if (scope.equals("udp")){
+            for (int i = 0; i < udp.length; i++){
+                portScansUDP.add(new PortScanUDP(mIPAddress, udp[i]));
+            }
             udpScan();
         } else {
+            for (int i = 0; i < tcp.length; i++){
+                portScans.add(new PortScan(mIPAddress, tcp[i]));
+            }
             tcpScan();
+            for (int i = 0; i < udp.length; i++){
+                portScansUDP.add(new PortScanUDP(mIPAddress, udp[i]));
+            }
             udpScan();
         }
     }
 
+    /**
+     * Scans each tcp Port
+     */
     private void tcpScan(){
         System.out.println("Commencing tcp scans.");
-        for (int i = 0; i < portScans.length; i++){
-                portScans[i] = new PortScan(mIPAddress, tcp[i]);
-                portScans[i].run();
-        }
-        for (int j = 0; j < 100; j++) {
-            while (portScans[j].isAlive()) {
-            }
-        }
+        portScans.stream().forEach(p -> p.start());
         System.out.println("All tcp scans completed.");
     }
 
+    /**
+     * Scans each udp port
+     */
     private void udpScan(){
         System.out.println("Commencing udp scans.");
-        for (int i = 0; i < 100; i++){
-            portScansUDP[i] = new PortScanUDP(mIPAddress, udp[i]);
-            portScansUDP[i].run();
-        }
-        for (int j = 0; j < 100; j++){
-            while (portScansUDP[j].isAlive()){}
-        }
+        portScansUDP.stream().forEach(p -> p.start());
         System.out.println("All udp scans completed.");
     }
 
-    public PortScan[] getTCPResults(){
+//The commented out functions are for testing purposes
+    /*
+    public java.util.List<PortScan> getTCPResults(){
         return portScans;
     }
 
-    public PortScanUDP[] getUDPResults(){
+    public java.util.List<PortScanUDP> getUDPResults(){
         return portScansUDP;
     }
+    */
 
+    /**
+     * Prints out the port status of each port in rows of 5 at a time.
+     * Does nothing if neither tcpScan() or udpScan() have been called.
+     */
     public void displayResults(){
-        String input;
-        int remaining, multiple;
-
-        if (portScans[0] != null){
-            remaining = portScans.length;
-            multiple = 0;
-
-            while (remaining > 10){
-                for (int i = 0; i < 10; i++, remaining--){
-                    System.out.println("TCP Port: " + portScans[i + (10*multiple)].getPort() + " is " + portScans[i + (10*multiple)].getPortStatus());
+        if (!portScans.isEmpty()) {
+            System.out.println("TCP Port Status");
+            System.out.print("Port: ");
+            for (int j = 0; j < 100; j += 5){
+                for (int i = 0; i < 5; i++){
+                    System.out.print(portScans.get(i + j).getPort() + " is " + portScans.get(i + j).getPortStatus());
+                    if (i == 4) {
+                        System.out.println();
+                        if (j < 94)
+                            System.out.print("Port: ");
+                    }
+                    else
+                        System.out.print(" | ");
                 }
-                multiple++;
-                System.out.println("Press enter to continue.");
-                input = stdin.nextLine();
             }
-            if (remaining > 0){
-                for (int i = 0; i < remaining; i++){
-                    System.out.println("TCP Port: " + portScans[i + (10*multiple)].getPort() + " is " + portScans[i + (10*multiple)].getPortStatus());
-                }
-                System.out.println("Press enter to continue.");
-                input = stdin.nextLine();
-            }
+            //portScans.stream().forEach(p -> System.out.println("TCP Port: " + p.getPort() + " is " + p.getPortStatus()));
         }
-
-        if (portScansUDP[0] != null){
-            remaining = portScans.length;
-            multiple = 0;
-
-            while (remaining > 10){
-                for (int i = 0; i < 10; i++, remaining--){
-                    System.out.println("UDP Port: " + portScansUDP[i + (10*multiple)].getPort() + " is " + portScansUDP[i + (10*multiple)].getPortStatus());
+        if (!portScansUDP.isEmpty()) {
+            System.out.println("UDP Port Status");
+            System.out.print("Port: ");
+            for (int j = 0; j < 100; j += 5){
+                for (int i = 0; i < 5; i++){
+                    System.out.print(portScansUDP.get(i+j).getPort() + " is " + portScansUDP.get(i+j).getPortStatus());
+                    if (i == 4) {
+                        System.out.println();
+                        System.out.print("Port: ");
+                    }
+                    else
+                        System.out.print(" | ");
                 }
-                multiple++;
-                System.out.println("Press enter to continue.");
-                input = stdin.nextLine();
             }
-            if (remaining > 0){
-                for (int i = 0; i < remaining; i++){
-                    System.out.println("UDP Port: " + portScansUDP[i + (10*multiple)].getPort() + " is " + portScansUDP[i + (10*multiple)].getPortStatus());
-                }
-                System.out.println("Press enter to continue.");
-                input = stdin.nextLine();
-            }
+            // portScansUDP.stream().forEach(p -> System.out.println("UDP Port: " + p.getPort() + " is " + p.getPortStatus()));
         }
     }
 
