@@ -59,10 +59,9 @@ public class Main {
                 System.out.println("Select option: ");
                 System.out.println("1 - List all open ports");
                 System.out.println("2 - List all closed ports");
-                System.out.println("3 - List all ports");
                 userSelect[2] = stdin.nextInt();
                 while (userSelect[2] < 1 || userSelect[2] > 3){
-                    System.out.println("Invalid option, please enter 1, 2, or 3");
+                    System.out.println("Invalid option, please enter 1 or 2");
                     userSelect[2] = stdin.nextInt();
                 }
                 do {
@@ -76,11 +75,7 @@ public class Main {
                         fullScan.displayClose();
                         break;
                     }
-                    else if(userSelect[2] == 3) {
-                        fullScan.displayResults();
-                        break;
-                    }
-                } while (userSelect[2] >= 1 && userSelect[2] <= 3);
+                } while (userSelect[2] >= 1 && userSelect[2] < 3);
                 break;
             case 5:
                 CustomScan cs = new CustomScan();
