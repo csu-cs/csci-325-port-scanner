@@ -67,16 +67,6 @@ public class FullScan {
         mTimeout = Timeout;
     }
 
-    public void displayResults() {
-        for(int index = 0; index < 65535;  index++) {
-            if(portStatus[index]) {
-                System.out.println("Port:" + index + " is open");
-            }
-            else {
-                System.out.println("Port: " + index + " is not open");
-            }
-        }
-    }
 
     public void displayOpen() {
         int check = 0;
@@ -87,11 +77,12 @@ public class FullScan {
                 System.out.print(index + ", ");
             }
             if(check == 25) {
+                System.out.println("are open.");
                 System.out.println();
                 check = 0;
             }
-            if(check2 == 100) {
-                System.out.println("\n" + "Enter a key to show next 100 or enter q to quit");
+            if(check2 == 500) {
+                System.out.println("\n" + "Enter a key to show next 500 or enter q to quit");
                 c = sc.next();
                 if(c.equals("q")) {
                     return;
@@ -101,11 +92,12 @@ public class FullScan {
             check++;
             check2++;
         }
-        System.out.println("are open.");
+
     }
     public void displayClose() {
         int check = 0;
         int check2 = 0;
+
         System.out.println("Ports: ");
         for(int index = 0; index < 65535; index++) {
             if (!portStatus[index]) {
@@ -115,8 +107,9 @@ public class FullScan {
                 System.out.println();
                 check = 0;
             }
-            if(check2 == 100) {
-                System.out.println("\n" + "Enter a key to show next 100 or enter q to quit");
+            if(check2 == 500) {
+                System.out.println("are not open.");
+                System.out.println("\n" + "Enter a key to show next 500 or enter q to quit");
                 c = sc.next();
                 if(c.equals("q")) {
                     return;
@@ -126,7 +119,7 @@ public class FullScan {
             check++;
             check2++;
         }
-        System.out.println("are not open.");
+
     }
     public static void main(String[] args) {
         FullScan FS = new FullScan("192.168.56.1");
