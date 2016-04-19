@@ -9,6 +9,14 @@ public interface Stack<T> {
     T peek();
     boolean isEmpty();
     int size();
+    int contains(T element);
+    void addFront(T element);
+    void addLast(T element);
+    boolean add(int idx, T element);
+    void remove(int idx);
+    void remove(T element);
+    T get(int idx);
     @Override
     String toString();
+
 }
